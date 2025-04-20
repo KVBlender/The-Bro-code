@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Bro Codex</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Crimson+Text&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Crimson Text', serif;
+      background: #f4ecd8;
+      color: #3e2c1c;
+      background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+    }
+
+    header {
+      background-color: #8b5e3c;
+      padding: 2rem 1rem;
+      font-family: 'Cinzel', serif;
+      font-size: 2.5rem;
+      color: #fdf5e6;
+      border-bottom: 5px solid #d2b48c;
+      text-shadow: 1px 1px 0 #5c3b1e;
+      position: relative;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: #fff8dc;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: 2px solid #8b5e3c;
+      border-radius: 8px;
+      background: #fffaf0;
+      color: #3e2c1c;
+    }
+
+    .top-buttons {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem;
+    }
+
+    .back-button, .article-counter {
+      font-size: 1rem;
+      background-color: #5c3b1e;
+      color: #fdf5e6;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      display: flex;
+    }
+
+    button {
+      margin-top: 1rem;
+      background-color: #8b5e3c;
+      color: #fdf5e6;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #5c3b1e;
+    }
+  </style>
+</head>
+<body>
+  <header>Edit the Bro Codex
+    <div class="top-buttons">
+      <a href="index.html" class="back-button">
+        <i class="fas fa-arrow-left"></i> Back to Main
+      </a>
+      <div class="article-counter">
+        Latest Article #: <span id="latestArticle">0</span>
+      </div>
+    </div>
+  </header>
+  
+  <div class="container">
+    <form id="editForm">
+      <label for="articleNumber">Article Number</label>
+      <input type="number" id="articleNumber" name="articleNumber" min="1" required>
+
+      <label for="articleContent">Article Content</label>
+      <textarea id="articleContent" name="articleContent" rows="5" required></textarea>
+
+      <button type="submit">Save Article</button>
+    </form>
+  </div>
+
+  <script>
+    // Auto-fill latest article number + 1
+    fetch('/get-articles')
+  .then(res => res.text())
+  .then(data => {
+    // Match "Article" or "undefinedArticle" followed by number
+    const matches = data.match(/(?:^|\n)\s*(?:undefined)?Article\s+\d+/g) || [];
+    const articleCount = matches.length;
+
+    // Update the counter
+    document.getElementById('latestArticle').innerText = articleCount;
+
+    // Suggest the next number
+    document.getElementById('articleNumber').value = articleCount + 1;
+  })
+  .catch(err => console.error('Failed to fetch article count:', err));
+
+  
+    // Handle article submission
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+  
+      const number = document.getElementById('articleNumber').value;
+      const content = document.getElementById('articleContent').value;
+  
+      fetch('/save-article', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ number, content })
+      })
+      .then(res => res.text())
+      .then(msg => alert(msg))
+      .catch(err => alert('Error: ' + err));
+    });
+  </script>
+  
+</body>
+</html>

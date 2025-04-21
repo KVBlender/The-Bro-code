@@ -131,8 +131,7 @@
   
 </head>
 <body>
-  <div id="article-content">Loading article...</div>
-
+ 
   <header>
     The Bro Codex
     <a href="edit.html" class="edit-page-link">
@@ -153,14 +152,7 @@
     &copy; 2025 The Bro Codex. Bros before bugs.
   </footer>
 
-  <script>
-fetch('articles.txt')
-  .then(response => response.text())
-  .then(data => {
-    document.getElementById('article-content').innerText = data;
-  })
-  .catch(error => console.error('Error loading article:', error));
-</script>
+
 
 
   <script>
